@@ -90,7 +90,7 @@ public class AndroidScalaPlugin implements Plugin<Project> {
         }
 
         project.tasks.withType(ScalaCompile) {
-            scalaCompileOptions.useAnt = false
+//            scalaCompileOptions.useAnt = false
         }
     }
 
@@ -135,11 +135,11 @@ public class AndroidScalaPlugin implements Plugin<Project> {
             def propertiesClass
             try {
                 propertiesClass = classLoader.loadClass("scala.util.Properties\$")
-            } catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException ignored) {
                 return null
             }
             def versionNumber = propertiesClass.MODULE$.scalaProps["maven.version.number"]
-            return new String(versionNumber) // Remove reference from ClassLoader
+            return new String(versionNumber as String) // Remove reference from ClassLoader
         } finally {
             if (classLoader instanceof Closeable) {
                 classLoader.close()
