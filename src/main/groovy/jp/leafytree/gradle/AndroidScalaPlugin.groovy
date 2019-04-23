@@ -21,10 +21,8 @@ import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory
-import org.gradle.api.internal.file.DefaultSourceDirectorySetFactory
-import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.tasks.DefaultScalaSourceSet
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.scala.ScalaCompile
 import org.gradle.util.ConfigureUtil
 
@@ -34,7 +32,8 @@ import java.util.concurrent.atomic.AtomicReference
  * AndroidScalaPlugin adds scala language support to official gradle android plugin.
  */
 public class AndroidScalaPlugin implements Plugin<Project> {
-    private final FileResolver fileResolver
+//    private final FileResolver fileResolver
+    private final ObjectFactory objectFactory
     final Map<String, SourceDirectorySet> sourceDirectorySetMap = new HashMap<>()
     private Project project
     private Object androidPlugin
@@ -49,8 +48,8 @@ public class AndroidScalaPlugin implements Plugin<Project> {
      * @param fileResolver the FileResolver
      */
     @Inject
-    public AndroidScalaPlugin(FileResolver fileResolver) {
-        this.fileResolver = fileResolver
+    public AndroidScalaPlugin(ObjectFactory objectFactory) {
+        this.objectFactory = objectFactory
     }
 
     /**
@@ -167,11 +166,11 @@ public class AndroidScalaPlugin implements Plugin<Project> {
                 return
             }
             def include = "**/*.scala"
-            sourceSet.java.filter.include(include);
-            def dirSetFactory = new DefaultSourceDirectorySetFactory(fileResolver, new DefaultDirectoryFileTreeFactory())
-            sourceSet.convention.plugins.scala = new DefaultScalaSourceSet(sourceSet.name + "_AndroidScalaPlugin", dirSetFactory)
+            sourceSet.java.filter.include(include)
+//            def dirSetFactory = new DefaultSourceDirectorySetFactory(fileResolver, new DefaultDirectoryFileTreeFactory())
+            sourceSet.convention.plugins.scala = new DefaultScalaSourceSet(sourceSet.name + "_AndroidScalaPlugin", objectFactory)
             def scala = sourceSet.scala
-            scala.filter.include(include);
+            scala.filter.include(include)
             def scalaSrcDir = ["src", sourceSet.name, "scala"].join(File.separator)
             scala.srcDir(scalaSrcDir)
             sourceDirectorySetMap[sourceSet.name] = scala
