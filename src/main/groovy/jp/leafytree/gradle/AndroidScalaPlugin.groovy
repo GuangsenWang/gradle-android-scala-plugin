@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicReference
 /**
  * AndroidScalaPlugin adds scala language support to official gradle android plugin.
  */
-public class AndroidScalaPlugin implements Plugin<Project> {
+class AndroidScalaPlugin implements Plugin<Project> {
 //    private final FileResolver fileResolver
     private final ObjectFactory objectFactory
     final Map<String, SourceDirectorySet> sourceDirectorySetMap = new HashMap<>()
@@ -48,7 +48,7 @@ public class AndroidScalaPlugin implements Plugin<Project> {
      * @param fileResolver the FileResolver
      */
     @Inject
-    public AndroidScalaPlugin(ObjectFactory objectFactory) {
+    AndroidScalaPlugin(ObjectFactory objectFactory) {
         this.objectFactory = objectFactory
     }
 
@@ -99,7 +99,7 @@ public class AndroidScalaPlugin implements Plugin<Project> {
      * @param project currnet project
      * @param androidExtension extension of Android Plugin
      */
-    public void apply(Project project) {
+    void apply(Project project) {
         if (!["com.android.application", 
 		"android", 
 		"com.android.library", 
@@ -183,7 +183,13 @@ public class AndroidScalaPlugin implements Plugin<Project> {
      * @param task the JavaCompile task
      */
     void addAndroidScalaCompileTask(Object variant) {
-        def javaCompileTask = variant.javaCompileProvider.get()
+        def javaCompileTask
+        if (variant.hasProperty('javaCompileProvider')) {
+            // Android 3.3.0+
+            javaCompileTask = variant.javaCompileProvider.get()
+        } else {
+            javaCompileTask = variant.javaCompile
+        }
         // To prevent locking classes.jar by JDK6's URLClassLoader
         def libraryClasspath = javaCompileTask.classpath.grep { it.name != "classes.jar" }
         def scalaVersion = scalaVersionFromClasspath(libraryClasspath)
@@ -191,13 +197,13 @@ public class AndroidScalaPlugin implements Plugin<Project> {
             return
         }
         project.logger.info("scala-library version=$scalaVersion detected")
-        def zincConfigurationName = "androidScalaPluginZincFor" + javaCompileTask.name
+        def zincConfigurationName = "androidScalaPluginZincFor".plus(javaCompileTask.name)
         def zincConfiguration = project.configurations.findByName(zincConfigurationName)
         if (!zincConfiguration) {
             zincConfiguration = project.configurations.create(zincConfigurationName)
             project.dependencies.add(zincConfigurationName, "com.typesafe.zinc:zinc:0.3.7")
         }
-        def compilerConfigurationName = "androidScalaPluginScalaCompilerFor" + javaCompileTask.name
+        def compilerConfigurationName = "androidScalaPluginScalaCompilerFor".plus(javaCompileTask.name)
         def compilerConfiguration = project.configurations.findByName(compilerConfigurationName)
         if (!compilerConfiguration) {
             compilerConfiguration = project.configurations.create(compilerConfigurationName)
