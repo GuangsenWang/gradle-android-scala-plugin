@@ -20,7 +20,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.tasks.DefaultScalaSourceSet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.scala.ScalaCompile
@@ -34,7 +33,7 @@ import java.util.concurrent.atomic.AtomicReference
 class AndroidScalaPlugin implements Plugin<Project> {
 //    private final FileResolver fileResolver
     private final ObjectFactory objectFactory
-    final Map<String, SourceDirectorySet> sourceDirectorySetMap = new HashMap<>()
+//    final Map<String, SourceDirectorySet> sourceDirectorySetMap = new HashMap<>()
     private Project project
     private Object androidPlugin
     private Object androidExtension
@@ -185,7 +184,7 @@ class AndroidScalaPlugin implements Plugin<Project> {
     void addAndroidScalaCompileTask(Object variant) {
         def javaCompileTask
         if (variant.hasProperty('javaCompileProvider')) {
-            // Android 3.3.0+
+            // Android studio 3.3.0+
             javaCompileTask = variant.javaCompileProvider.get()
         } else {
             javaCompileTask = variant.javaCompile
@@ -219,7 +218,7 @@ class AndroidScalaPlugin implements Plugin<Project> {
         scalaCompileTask.sourceCompatibility = javaCompileTask.sourceCompatibility
         scalaCompileTask.targetCompatibility = javaCompileTask.targetCompatibility
         scalaCompileTask.scalaCompileOptions.encoding = javaCompileTask.options.encoding
-        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.androidBuilder.getBootClasspath(false))
+        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.androidBuilder.getBootStrapClasspath(false))
         scalaCompileTask.scalaClasspath = compilerConfiguration.asFileTree
         scalaCompileTask.zincClasspath = zincConfiguration.asFileTree
         scalaCompileTask.scalaCompileOptions.incrementalOptions.analysisFile = new File(variantWorkDir, "analysis.txt")
