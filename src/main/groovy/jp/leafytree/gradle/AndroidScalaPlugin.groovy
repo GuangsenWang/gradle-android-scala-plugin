@@ -20,6 +20,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.tasks.DefaultScalaSourceSet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.scala.ScalaCompile
@@ -33,7 +34,7 @@ import java.util.concurrent.atomic.AtomicReference
 class AndroidScalaPlugin implements Plugin<Project> {
 //    private final FileResolver fileResolver
     private final ObjectFactory objectFactory
-//    final Map<String, SourceDirectorySet> sourceDirectorySetMap = new HashMap<>()
+    final Map<String, SourceDirectorySet> sourceDirectorySetMap = new HashMap<>()
     private Project project
     private Object androidPlugin
     private Object androidExtension
