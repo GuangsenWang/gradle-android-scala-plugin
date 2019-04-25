@@ -185,7 +185,7 @@ class AndroidScalaPlugin implements Plugin<Project> {
     void addAndroidScalaCompileTask(Object variant) {
         def javaCompileTask
         if (variant.hasProperty('javaCompileProvider')) {
-            // Android studio 3.3.0+
+            // Android 3.3.0+
             javaCompileTask = variant.javaCompileProvider.get()
         } else {
             javaCompileTask = variant.javaCompile
@@ -219,9 +219,9 @@ class AndroidScalaPlugin implements Plugin<Project> {
         scalaCompileTask.sourceCompatibility = javaCompileTask.sourceCompatibility
         scalaCompileTask.targetCompatibility = javaCompileTask.targetCompatibility
         scalaCompileTask.scalaCompileOptions.encoding = javaCompileTask.options.encoding
-        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.androidBuilder.getBootStrapClasspath())
-        scalaCompileTask.scalaClasspath = compilerConfiguration.asFileTree
-        scalaCompileTask.zincClasspath = zincConfiguration.asFileTree
+        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.androidBuilder.getBootClasspath())
+        scalaCompileTask.scalaClasspath = compilerConfiguration.getAsFileTree()
+        scalaCompileTask.zincClasspath = zincConfiguration.getAsFileTree()
         scalaCompileTask.scalaCompileOptions.incrementalOptions.analysisFile = new File(variantWorkDir, "analysis.txt")
         if (extension.addparams) {
             scalaCompileTask.scalaCompileOptions.additionalParameters = [extension.addparams]
