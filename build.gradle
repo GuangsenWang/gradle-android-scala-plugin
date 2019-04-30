@@ -21,12 +21,14 @@ apply plugin: "idea"
 
 repositories {
     jcenter()
+    maven { url 'https://dl.google.com/dl/android/maven2'}
     mavenCentral()
 }
 
 buildscript {
     repositories {
         jcenter()
+        google()
         mavenCentral()
     }
 }

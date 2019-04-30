@@ -201,7 +201,7 @@ class AndroidScalaPlugin implements Plugin<Project> {
         def zincConfiguration = project.configurations.findByName(zincConfigurationName)
         if (!zincConfiguration) {
             zincConfiguration = project.configurations.create(zincConfigurationName)
-            project.dependencies.add(zincConfigurationName, "com.typesafe.zinc:zinc:0.3.7")
+            project.dependencies.add(zincConfigurationName, "com.typesafe.zinc:zinc:0.3.15")
         }
         def compilerConfigurationName = "androidScalaPluginScalaCompilerFor".plus(javaCompileTask.name)
         def compilerConfiguration = project.configurations.findByName(compilerConfigurationName)
@@ -214,7 +214,7 @@ class AndroidScalaPlugin implements Plugin<Project> {
         def scalaSources = variant.variantData.variantConfiguration.sortedSourceProviders.inject([]) { acc, val ->
             acc + val.java.sourceFiles
         }
-        scalaCompileTask.source = scalaSources
+        scalaCompileTask.source.set(scalaSources)
         scalaCompileTask.destinationDir = javaCompileTask.destinationDir
         scalaCompileTask.sourceCompatibility = javaCompileTask.sourceCompatibility
         scalaCompileTask.targetCompatibility = javaCompileTask.targetCompatibility
