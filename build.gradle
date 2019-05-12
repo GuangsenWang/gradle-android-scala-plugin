@@ -97,12 +97,14 @@ uploadArchives {
 
 task groovydocJar(type: Jar, dependsOn: groovydoc) {
     from groovydoc.destinationDir
-    classifier = "javadoc"
+    archiveClassifier.set("javadoc")
+//    classifier = "javadoc"
 }
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
-    classifier = "sources"
+    archiveClassifier.set("sources")
+//    classifier = "sources"
 }
 
 artifacts {
