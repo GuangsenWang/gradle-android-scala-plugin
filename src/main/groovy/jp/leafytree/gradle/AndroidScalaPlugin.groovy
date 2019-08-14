@@ -191,12 +191,12 @@ class AndroidScalaPlugin implements Plugin<Project> {
             javaCompileTask = variant.javaCompile
         }
         // To prevent locking classes.jar by JDK6's URLClassLoader
-        def libraryClasspath = javaCompileTask.classpath.grep { it.name != "classes.jar" }
-        def scalaVersion = scalaVersionFromClasspath(libraryClasspath)
-        if (!scalaVersion) {
-            return
-        }
-        project.logger.info("scala-library version=$scalaVersion detected")
+//        def libraryClasspath = javaCompileTask.classpath.grep { it.name != "classes.jar" }
+//        def scalaVersion = scalaVersionFromClasspath(libraryClasspath)
+//        if (!scalaVersion) {
+//            return
+//        }
+//        project.logger.info("scala-library version=$scalaVersion detected")
         def zincConfigurationName = "androidScalaPluginZincFor".plus(javaCompileTask.name)
         def zincConfiguration = project.configurations.findByName(zincConfigurationName)
         if (!zincConfiguration) {
@@ -219,7 +219,7 @@ class AndroidScalaPlugin implements Plugin<Project> {
         scalaCompileTask.sourceCompatibility = javaCompileTask.sourceCompatibility
         scalaCompileTask.targetCompatibility = javaCompileTask.targetCompatibility
         scalaCompileTask.scalaCompileOptions.encoding = javaCompileTask.options.encoding
-        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.androidBuilder.getBootClasspath(false))
+        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.androidBuilder.getBootStrapClasspath(false))
         scalaCompileTask.scalaClasspath = compilerConfiguration.getAsFileTree()
         scalaCompileTask.zincClasspath = zincConfiguration.getAsFileTree()
         scalaCompileTask.scalaCompileOptions.incrementalOptions.analysisFile = new File(variantWorkDir, "analysis.txt")
