@@ -191,12 +191,12 @@ class AndroidScalaPlugin implements Plugin<Project> {
             javaCompileTask = variant.javaCompile
         }
         // To prevent locking classes.jar by JDK6's URLClassLoader
-//        def libraryClasspath = javaCompileTask.classpath.grep { it.name != "classes.jar" }
-//        def scalaVersion = scalaVersionFromClasspath(libraryClasspath)
-//        if (!scalaVersion) {
-//            return
-//        }
-//        project.logger.info("scala-library version=$scalaVersion detected")
+        def libraryClasspath = javaCompileTask.classpath.grep { it.name != "classes.jar" }
+        def scalaVersion = scalaVersionFromClasspath(libraryClasspath)
+        if (!scalaVersion) {
+            return
+        }
+        project.logger.info("scala-library version=$scalaVersion detected")
         def zincConfigurationName = "androidScalaPluginZincFor".plus(javaCompileTask.name)
         def zincConfiguration = project.configurations.findByName(zincConfigurationName)
         if (!zincConfiguration) {
