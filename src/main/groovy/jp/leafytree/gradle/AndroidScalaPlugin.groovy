@@ -219,7 +219,7 @@ class AndroidScalaPlugin implements Plugin<Project> {
         scalaCompileTask.sourceCompatibility = javaCompileTask.sourceCompatibility
         scalaCompileTask.targetCompatibility = javaCompileTask.targetCompatibility
         scalaCompileTask.scalaCompileOptions.encoding = javaCompileTask.options.encoding
-        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.getAndroidBuilder(null).getBootClasspath(androidPlugin.sdkParser))
+        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.getAndroidBuilder(android.applicationVariants[0]).getBootClasspath(androidPlugin.sdkParser))
         scalaCompileTask.scalaClasspath = compilerConfiguration.getAsFileTree()
         scalaCompileTask.zincClasspath = zincConfiguration.getAsFileTree()
         scalaCompileTask.scalaCompileOptions.incrementalOptions.analysisFile = new File(variantWorkDir, "analysis.txt")
