@@ -130,7 +130,7 @@ class AndroidScalaPlugin implements Plugin<Project> {
      */
     static String scalaVersionFromClasspath(Collection<File> classpath) {
         def urls = classpath.collect { it.toURI().toURL() }
-        def classLoader = new URLClassLoader(urls.toArray(new URL[0]) as URL)
+        def classLoader = new URLClassLoader(urls.toArray(new URL[0]))
         try {
             def propertiesClass
             try {
