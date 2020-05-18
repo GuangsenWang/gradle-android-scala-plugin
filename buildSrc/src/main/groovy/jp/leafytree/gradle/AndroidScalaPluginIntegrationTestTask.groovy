@@ -35,10 +35,10 @@ public class AndroidScalaPluginIntegrationTestTask extends DefaultTask {
         ].each { projectName, runOnTravis ->
             def gradleArgs = ["clean", "connectedCheck", "uninstallAll"]
             [
-                    ["4.1", true,  "2.11.11", "3.0.0", "android-26", "26.0.2", "8", "26"],
-                    ["4.1", false, "2.11.11", "3.0.0", "android-26", "26.0.2", "8", "26"],
-                    ["4.1", false, "2.11.11", "3.0.0", "android-26", "26.0.2", "21", "26"],
-                    ["4.1", false, "2.11.11", "3.0.0", "android-26", "26.0.2", "21", "26"],
+                    ["5.6.4", true,  "2.11.12", "3.6.3", "android-29", "28.0.3", "21", "29"],
+                    ["5.6.4", false, "2.11.12", "3.6.3", "android-29", "28.0.3", "21", "29"],
+                    ["5.6.4", false, "2.11.12", "3.6.3", "android-29", "28.0.3", "21", "29"],
+                    ["5.6.4", false, "2.11.12", "3.6.3", "android-29", "28.0.3", "21", "29"],
             ].each { testParameters ->
                 if (!travis || (runOnTravis && testParameters[1])) {
                     def gradleVersion = testParameters[0]
@@ -51,7 +51,7 @@ public class AndroidScalaPluginIntegrationTestTask extends DefaultTask {
         }
     }
 
-    def getGradleWrapperProperties(gradleVersion) {
+    static def getGradleWrapperProperties(gradleVersion) {
         def gradleWrapperProperties = new Properties()
         gradleWrapperProperties.putAll([
                 distributionBase: "GRADLE_USER_HOME",

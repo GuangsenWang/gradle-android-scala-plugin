@@ -20,6 +20,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.tasks.DefaultScalaSourceSet
 import org.gradle.api.model.ObjectFactory
@@ -129,7 +130,7 @@ class AndroidScalaPlugin implements Plugin<Project> {
      */
     static String scalaVersionFromClasspath(Collection<File> classpath) {
         def urls = classpath.collect { it.toURI().toURL() }
-        def classLoader = new URLClassLoader(urls.toArray(new URL[0]))
+        def classLoader = new URLClassLoader(urls.toArray(new URL[0]) as URL)
         try {
             def propertiesClass
             try {
@@ -219,10 +220,10 @@ class AndroidScalaPlugin implements Plugin<Project> {
         scalaCompileTask.sourceCompatibility = javaCompileTask.sourceCompatibility
         scalaCompileTask.targetCompatibility = javaCompileTask.targetCompatibility
         scalaCompileTask.scalaCompileOptions.encoding = javaCompileTask.options.encoding
-        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.getAndroidBuilder(variant).getBootClasspath(androidPlugin.sdkParser))
+        scalaCompileTask.classpath = javaCompileTask.classpath + project.files(androidPlugin.globalScope.getBootClasspath())
         scalaCompileTask.scalaClasspath = compilerConfiguration.getAsFileTree()
         scalaCompileTask.zincClasspath = zincConfiguration.getAsFileTree()
-        scalaCompileTask.scalaCompileOptions.incrementalOptions.analysisFile = new File(variantWorkDir, "analysis.txt")
+        scalaCompileTask.scalaCompileOptions.incrementalOptions.analysisFile = new File(variantWorkDir, "analysis.txt") as RegularFileProperty
         if (extension.addparams) {
             scalaCompileTask.scalaCompileOptions.additionalParameters = [extension.addparams]
         }
@@ -258,7 +259,7 @@ class AndroidScalaPlugin implements Plugin<Project> {
             javaCompileTask.options.compilerArgs = javaCompileOriginalOptionsCompilerArgs.get()
 
             // R.java is appended lazily
-            scalaCompileTask.source = [] + new TreeSet(scalaCompileTask.source.collect { it } + javaCompileTask.source.collect { it }) // unique
+            scalaCompileTask.source = [] + new TreeSet(scalaCompileTask.source.collect { it } + (javaCompileTask.source.collect { it } as Collection<File>)) // unique
             def noisyProperties = ["compiler", "includeJavaRuntime", "incremental", "optimize", "useAnt"]
             InvokerHelper.setProperties(scalaCompileTask.options,
                 javaCompileTask.options.properties.findAll { !noisyProperties.contains(it.key) })
