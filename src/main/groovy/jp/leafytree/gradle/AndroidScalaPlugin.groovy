@@ -71,10 +71,10 @@ class AndroidScalaPlugin implements Plugin<Project> {
         this.androidExtension = androidExtension
         this.workDir = new File(project.buildDir, "android-scala")
         updateAndroidExtension()
-        updateAndroidSourceSetsExtension()
-        androidExtension.buildTypes.whenObjectAdded { updateAndroidSourceSetsExtension() }
-        androidExtension.productFlavors.whenObjectAdded { updateAndroidSourceSetsExtension() }
-        androidExtension.signingConfigs.whenObjectAdded { updateAndroidSourceSetsExtension() }
+        addSourceSetExtensions()
+        androidExtension.buildTypes.whenObjectAdded { addSourceSetExtensions() }
+        androidExtension.productFlavors.whenObjectAdded { addSourceSetExtensions() }
+        androidExtension.signingConfigs.whenObjectAdded { addSourceSetExtensions() }
 
         project.afterEvaluate {
             updateAndroidSourceSetsExtension()
@@ -161,21 +161,45 @@ class AndroidScalaPlugin implements Plugin<Project> {
     /**
      * Updates AndroidPlugin's sourceSets extension to work with AndroidScalaPlugin.
      */
-    void updateAndroidSourceSetsExtension() {
-        androidExtension.sourceSets.each { sourceSet ->
-            if (sourceDirectorySetMap.containsKey(sourceSet.name)) {
-                return
-            }
-            def include = "**/*.scala"
-            sourceSet.java.filter.include(include)
-//            def dirSetFactory = new DefaultSourceDirectorySetFactory(fileResolver, new DefaultDirectoryFileTreeFactory())
-            project.convention.plugins.scala = new DefaultScalaSourceSet(sourceSet.name + "_AndroidScalaPlugin", project.getObjects())
-            def scala = sourceSet.scala
-            scala.filter.include(include)
-            def scalaSrcDir = ["src", sourceSet.name, "scala"].join(File.separator)
-            scala.srcDir(scalaSrcDir)
-            sourceDirectorySetMap[sourceSet.name] = scala
+//    void updateAndroidSourceSetsExtension() {
+//        androidExtension.sourceSets.each { sourceSet ->
+//            if (sourceDirectorySetMap.containsKey(sourceSet.name)) {
+//                return
+//            }
+//            def include = "**/*.scala"
+//            sourceSet.java.filter.include(include)
+////            def dirSetFactory = new DefaultSourceDirectorySetFactory(fileResolver, new DefaultDirectoryFileTreeFactory())
+//            sourceSet.convention.plugins.scala = new DefaultScalaSourceSet(sourceSet.name + "_AndroidScalaPlugin", objectFactory)
+//            def scala = sourceSet.scala
+//            scala.filter.include(include)
+//            def scalaSrcDir = ["src", sourceSet.name, "scala"].join(File.separator)
+//            scala.srcDir(scalaSrcDir)
+//            sourceDirectorySetMap[sourceSet.name] = scala
+//        }
+//    }
+
+    /**
+     * Adds the proto extension to all SourceSets, e.g., it creates
+     * sourceSets.main.proto and sourceSets.test.proto.
+     */
+    private void addSourceSetExtensions() {
+        getSourceSets().all {  sourceSet ->
+            String name = sourceSet.name
+            SourceDirectorySet sds = project.objects.sourceDirectorySet(name, "${name} Scala source")
+            sourceSet.extensions.add('scala', sds)
+            sds.srcDir("src/${name}/scala")
+            sds.include("**/*.scala")
         }
+    }
+
+    /**
+     * Returns the sourceSets container of a Java or an Android project.
+     */
+    private Object getSourceSets() {
+        if (Utils.isAndroidProject(project)) {
+            return project.android.sourceSets
+        }
+        return project.sourceSets
     }
 
     /**
