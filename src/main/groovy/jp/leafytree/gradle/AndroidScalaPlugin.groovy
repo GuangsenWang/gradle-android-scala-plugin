@@ -169,7 +169,7 @@ class AndroidScalaPlugin implements Plugin<Project> {
             def include = "**/*.scala"
             sourceSet.java.filter.include(include)
 //            def dirSetFactory = new DefaultSourceDirectorySetFactory(fileResolver, new DefaultDirectoryFileTreeFactory())
-            sourceSet.convention.plugins.scala = new DefaultScalaSourceSet(sourceSet.name + "_AndroidScalaPlugin", objectFactory)
+            sourceSet.convention.plugins.scala = new DefaultScalaSourceSet(sourceSet.name + "_AndroidScalaPlugin", project.getObjects())
             def scala = sourceSet.scala
             scala.filter.include(include)
             def scalaSrcDir = ["src", sourceSet.name, "scala"].join(File.separator)
