@@ -72,12 +72,12 @@ class AndroidScalaPlugin implements Plugin<Project> {
         this.workDir = new File(project.buildDir, "android-scala")
         updateAndroidExtension()
         addSourceSetExtensions()
-        androidExtension.buildTypes.whenObjectAdded { addSourceSetExtensions() }
-        androidExtension.productFlavors.whenObjectAdded { addSourceSetExtensions() }
-        androidExtension.signingConfigs.whenObjectAdded { addSourceSetExtensions() }
+//        androidExtension.buildTypes.whenObjectAdded { addSourceSetExtensions() }
+//        androidExtension.productFlavors.whenObjectAdded { addSourceSetExtensions() }
+//        androidExtension.signingConfigs.whenObjectAdded { addSourceSetExtensions() }
 
         project.afterEvaluate {
-            addSourceSetExtensions()
+//            addSourceSetExtensions()
             androidExtension.sourceSets.each { it.java.srcDirs(it.scala.srcDirs) }
             def allVariants = androidExtension.testVariants + (isLibrary ? androidExtension.libraryVariants : androidExtension.applicationVariants)
             allVariants.each { variant ->
